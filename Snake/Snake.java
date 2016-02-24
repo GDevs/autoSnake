@@ -16,7 +16,14 @@ public class Snake extends JPanel
         mainFrame.add(this);
         this.setVisible(true);
         mainFrame.setVisible(true);
-        int[][] knots = {{s,s},{s,s},{s,s},{s,s},{s,s},{s,s},{s,s}};
+        int[][] knots = new int[7][2];
+        int[][] knots_old = new int[7][2];
+        for(int x = 0; x < knots.length; x++){
+            for(int y = 0; y < knots[x].length; y++){
+                knots[x][y] = s;
+            }
+        }
+        //int[][] knots = {{s,s},{s,s},{s,s},{s,s},{s,s},{s,s},{s,s}};
         length = knots.length;
         this.knots = knots;
 
@@ -42,8 +49,8 @@ public class Snake extends JPanel
     public void update(){
         int last = currend;
         currend = (currend+1)%length;
-        knots[currend][0] =(knots[last][0] + (Math.abs((int)(Math.random() * 100)) -50)%1000);
-        knots[currend][1] =(knots[last][1] + (Math.abs((int)(Math.random() * 100)) -50)%1000);
+        knots[currend][0] =(knots[(currend+1)%length][0] + (Math.abs((int)(Math.random() * 100)) -50))%1000;
+        knots[currend][1] =(knots[(currend+1)%length][1] + (Math.abs((int)(Math.random() * 100)) -50))%1000;
     }
 
     public void paint(Graphics g){
