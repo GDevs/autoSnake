@@ -14,7 +14,7 @@ public class Animationtester implements Runnable{
 	public Animationtester () {
 		mainFrame = new JFrame();
 		mainFrame.setBounds(600, 400, 200, 200);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		a = new JButton();
 		a.setBounds(5, 5, 150, 150);
 		mainFrame.add(a);

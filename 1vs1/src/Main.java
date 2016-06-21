@@ -33,6 +33,7 @@ public class Main implements  ActionListener
 	private JFrame mainMenu;
 	
 	private JButton WASDmini;
+	private JButton Animationstester;
 	
 	public Main() {
 		this.creatFrame();
@@ -66,6 +67,17 @@ public class Main implements  ActionListener
 		this.WASDmini.addActionListener(this);
 		this.mainMenu.add(WASDmini);
 		
+		this.Animationstester = new JButton();
+		this.Animationstester.setBounds(this.getPosOfButton(2), this.getPosOfButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
+		try {
+			Image img = ImageIO.read(new File(Main.ICON_PATH + "ANIMATIONSTESTER.png"));
+			Animationstester.setIcon(new ImageIcon(img));
+		  } catch (IOException ex) {
+			  System.out.println("Img error");
+		  }
+		this.Animationstester.addActionListener(this);
+		this.mainMenu.add(Animationstester);
+		
 	}
 	
 	/* gibt die x bzw y bos des Buttons an relativ zu seiner
@@ -79,8 +91,13 @@ public class Main implements  ActionListener
 	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource().equals(WASDmini)) {
+		if(ae.getSource().equals(this.WASDmini)) {
 			new WASD_Mini();
+		}
+		else if(ae.getSource().equals(this.Animationstester)) {
+			Animationtester a = new Animationtester();
+			Thread t = new Thread(a);
+			t.start();
 		}
 	}
 	
