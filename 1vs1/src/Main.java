@@ -1,178 +1,91 @@
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.text.DecimalFormat;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 
-public class Main implements KeyListener{
-	private JFrame mainFrame;
-	private JButton aButton,wButton,sButton,dButton;
-	private JTextField scoreField;
-	
-	private double startTime = System.currentTimeMillis()/1000;
-	
-	private int hitstreak = 0,hit = 0,miss = 0;
-	
-	
-	private char currendButton = 'w';
 
-public Main()
+
+/**
+ * 
+ * @author Hulo101
+ *
+ * "Umgebung" um kleine Spiele zu sammeln
+ * 5 pixel Abstand zwichen allen Buttons
+ * 
+ */
+
+
+public class Main implements  ActionListener
 {
-	this.mainFrame = new JFrame();
-	this.mainFrame.setBounds(500, 250, 200, 300);
-	this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.mainFrame.setLayout(null);
-	this.mainFrame.setResizable(false);
-	this.addComponentstoFrame();
-	this.mainFrame.revalidate();
-	this.mainFrame.setVisible(true);
-	this.mainFrame.addKeyListener(this);
-	this.mainFrame.requestFocus();
+	public static int WIDTH = 1000;
+	public static int HEIGHT = 500;
 	
-	this.newTarget();	
-}
-
-
-
-private void addComponentstoFrame()
-{
-	this.aButton = new JButton("A");
-	this.aButton.setFocusable(false);
-	this.aButton.setBounds(10, 120, 50, 50);
-	mainFrame.add(this.aButton);
+	public static int BUTTON_BOUNDS = 100;
+	public static int INTERSPACE_SIZE = 5;
 	
-	this.sButton = new JButton("S");
-	this.sButton.setFocusable(false);
-	this.sButton.setBounds(65, 175, 50, 50);
-	mainFrame.add(this.sButton);
+	public static String ICON_PATH = "icons/";
+	private JFrame mainMenu;
 	
-	this.dButton = new JButton("D");
-	this.dButton.setFocusable(false);
-	this.dButton.setBounds(120, 120, 50, 50);
-	mainFrame.add(this.dButton);
+	private JButton WASDmini;
 	
-	this.wButton = new JButton("W");
-	this.wButton.setFocusable(false);
-	this.wButton.setBounds(65, 65, 50, 50);
-	mainFrame.add(this.wButton);
-	
-	this.scoreField = new JTextField();
-	this.scoreField.setFocusable(false);
-	this.scoreField.setBounds(5, 20, 185, 40);
-	this.scoreField.setText("Streak: "+hitstreak+" Hit:"+hit+" Miss "+miss+"AVG");
-	mainFrame.add(this.scoreField);
-}
-
-
-
-
-
-
-private void eventManager(char pressedChar)
-{
-	if(pressedChar == this.currendButton) 
-	{
-		this.hit++;
-		this.hitstreak ++;
-		this.resetButtons();
-		this.newTarget();
-		this.mainFrame.repaint();
+	public Main() {
+		this.creatFrame();
+		this.addComponentstoFrame();
+		this.mainMenu.repaint();
 	}
-	else
-	{
-		this.miss++;
-		this.hitstreak = 0;
+
+	private void creatFrame() {
+		this.mainMenu = new JFrame();
+		this.mainMenu.setSize(Main.WIDTH, Main.HEIGHT);
+		this.mainMenu.setLocationRelativeTo(null);
+		this.mainMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainMenu.setResizable(false);
+		this.mainMenu.setLayout(null);
+		this.mainMenu.setVisible(true);
 	}
-	
-	double temp = this.hit / (System.currentTimeMillis()/1000 - this.startTime);
-	DecimalFormat numberFormat = new DecimalFormat("#.00");
-	this.scoreField.setText("Streak:" +hitstreak+ " Hit:" +hit+ " Miss" +miss+ " AVG:" +numberFormat.format(temp));
-}
 
-
-
-
-
-private void resetButtons()
-{
-	this.aButton.setBackground(null);
-	this.sButton.setBackground(null);
-	this.dButton.setBackground(null);
-	this.wButton.setBackground(null);
-}
-
-
-
-
-
-private synchronized void newTarget()
-{
-	int temp = (int) Math.round(Math.random() * 3 );
-	if(temp == 0)
-	{
-		this.aButton.setBackground(Color.GREEN);
-		this.currendButton = 'a';
-	}
-	else if(temp == 1)
-	{
-		this.sButton.setBackground(Color.GREEN);
-		this.currendButton = 's';
-	}
-	else if(temp == 2)
-	{
-		this.dButton.setBackground(Color.GREEN);
-		this.currendButton = 'd';
-	}
-	else if(temp == 3)
-	{
-		this.wButton.setBackground(Color.GREEN);
-		this.currendButton = 'w';
-	}
-}
-
-
-
-
-
-@Override
-public void keyPressed(KeyEvent arg0) 
-{
+	/*
+	 * Default close Operation der Spiele  NICHT auf exit_on_Close stellen
+	 * -> terminiert auch das hauptfenster
+	 */
+	private void addComponentstoFrame() {
+		this.WASDmini = new JButton();
+		this.WASDmini.setBounds(this.getPosOfButton(1), this.getPosOfButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
+		try {
+			Image img = ImageIO.read(new File(Main.ICON_PATH + "WASDMINI.png"));
+		    WASDmini.setIcon(new ImageIcon(img));
+		  } catch (IOException ex) {
+			  System.out.println("Img error");
+		  }
+		this.WASDmini.addActionListener(this);
+		this.mainMenu.add(WASDmini);
 		
-}
-
-
-
-
-
-@Override
-public void keyReleased(KeyEvent arg0) 
-{
-		
-}
-
-
-
-
-
-@Override
-public void keyTyped(KeyEvent ke) 
-{
-	this.eventManager(ke.getKeyChar());
-}
-
-
-
-
-
-public static void main(String args[])
-{
-  Main a = new Main();
-}
-
-
+	}
+	
+	/* gibt die x bzw y bos des Buttons an relativ zu seiner
+	 * x Position (1ter Button von recht, 2ter... oder 1ter von oben, 2ter von oben...)
+	 * 
+	 * 
+	 */
+	public int getPosOfButton(int buttonNr) {
+		return (buttonNr-1) * Main.BUTTON_BOUNDS + Main.INTERSPACE_SIZE * buttonNr;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource().equals(WASDmini)) {
+			new WASD_Mini();
+		}
+	}
+	
+	public static void main(String args[]){
+	Main m = new Main();
+	}
 
 }
-
