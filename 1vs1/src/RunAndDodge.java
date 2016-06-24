@@ -2,10 +2,6 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -215,8 +211,11 @@ public class RunAndDodge implements Runnable{
 	private ArrayList<Bullet> bullets;
 	private int bulletTimer = 1000;
 	private int bulletSpeed = 10;
+	private int graphicSpeed = 333;
+	private int playerGraphicCounter = 1;
 	
 	private double lastTime = System.currentTimeMillis();
+	private double graphicTime = lastTime;
 	
 	
 	
@@ -260,18 +259,20 @@ public class RunAndDodge implements Runnable{
 			//BufferedReader br = new BufferedReader(fr);
 			try {
 				//int count = Integer.parseInt(br.readLine());
-				  int count = 1;
-				for(int i = 1; i< count+1; i++) {
-					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"1.png");
+				for(int i = 1; i < 4; i++ ){
+					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"D" + i + ".png");
 					Image img = ImageIO.read(bildURL); 
-					System.out.println(img == null);
+					img = ImageIO.read(bildURL);
+					bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"L" + i + ".png");
+					img = ImageIO.read(bildURL);
 					this.playerImages.add(img);
-					
-					URL bildURL2 = getClass().getResource(RunAndDodge.BULLET_ICON_PATH +"1.png");
-					Image img2 = ImageIO.read(bildURL2); 
-					System.out.println(img2 == null);
-					this.bulletImages.add(img2);
 				}
+					
+					
+				URL bildURL2 = getClass().getResource(RunAndDodge.BULLET_ICON_PATH +"1.png");
+				Image img2 = ImageIO.read(bildURL2); 
+				this.bulletImages.add(img2);
+				
 			} 
 			catch (NumberFormatException | IOException e) {
 				e.printStackTrace();
@@ -287,14 +288,31 @@ public class RunAndDodge implements Runnable{
 		
 	}
 	
+	private Image calcPlayerImage() {
+		if(this.player.isSpressed) {
+			return this.playerImages.get(this.playerGraphicCounter);
+		} else {
+			return this.playerImages.get(this.playerGraphicCounter +3);
+		}
+	}
+	
 	@Override
 	public void run() {
 		while(!gotHit) {
+			
+			double currentTime = System.currentTimeMillis();
+			
+			
+			if(this.graphicTime - currentTime > 333) {
+				this.playerGraphicCounter = ((this.playerGraphicCounter + 1) % 3) ; 
+				Image img = this.calcPlayerImage();
+				this.player.setImage(img);
+			}
 			this.player.move();
 			this.player.updatePos();
 			this.player.repaint();
 			
-			double currentTime = System.currentTimeMillis();
+			
 			if(this.lastTime + this.bulletTimer < currentTime) {
 				
 				this.lastTime = this.lastTime + this.bulletTimer;
