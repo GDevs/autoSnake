@@ -1,6 +1,7 @@
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -8,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class Animationtester implements Runnable{
-	public static String ANIMATION_STORAGE_PATH = "rec/Animationtester/";
+	public static String ANIMATION_STORAGE_PATH = "/rec/Animationtester/";
 	private JFrame mainFrame;
 	private JButton a;
 	
@@ -28,7 +29,8 @@ public class Animationtester implements Runnable{
 		while(true){
 			for(int i = -10; i < 11; i++){
 				try {
-					Image img = ImageIO.read(new File(Animationtester.ANIMATION_STORAGE_PATH+Math.abs(i)+".png"));
+					URL bildURL = getClass().getResource(Animationtester.ANIMATION_STORAGE_PATH + Math.abs(i) + ".png");
+					Image img = ImageIO.read(bildURL); 
 					a.setIcon(new ImageIcon(img));
 				} catch (IOException ex) {
 				  System.out.println("Img error");

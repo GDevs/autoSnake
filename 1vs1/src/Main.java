@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -33,13 +34,14 @@ public class Main implements  ActionListener
 	public static int BUTTON_BOUNDS = 100; //Gräße der Buttons (rechteckig)
 	public static int INTERSPACE_SIZE = 5; //Platz zwichen buttons untereinander und vom rand
 	
-	public static String ICON_PATH = "icons/"; //pfad in dem die Icons für auf die Buttons liegen
+	public static String ICON_PATH = "/rec/icons/"; //pfad in dem die Icons für auf die Buttons liegen
 	private JFrame mainMenu;
 	
 	
 	//1111111111111111111111111111111111111111111111111111111111111111111111111111
 	private JButton WASDmini;
 	private JButton Animationstester;
+	private JButton RunAndDodge;
 	
 	public Main() {
 		this.creatFrame();
@@ -68,8 +70,10 @@ public class Main implements  ActionListener
 		this.WASDmini = new JButton();
 		this.WASDmini.setBounds(this.getPosforButton(1), this.getPosforButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
 		try {
-			Image img = ImageIO.read(new File(Main.ICON_PATH + "WASDMINI.png"));
-		    WASDmini.setIcon(new ImageIcon(img));
+			URL bildURL = getClass().getResource(Main.ICON_PATH + "WASDMINI.png");
+			System.out.println(bildURL);
+			Image img = ImageIO.read(bildURL); // new File(Main.ICON_PATH + "WASDMINI.png")
+		    this.WASDmini.setIcon(new ImageIcon(img));
 		  } catch (IOException ex) {
 			  System.out.println("Img error");
 		  }
@@ -81,14 +85,26 @@ public class Main implements  ActionListener
 		this.Animationstester = new JButton();
 		this.Animationstester.setBounds(this.getPosforButton(2), this.getPosforButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
 		try {
-			Image img = ImageIO.read(new File(Main.ICON_PATH + "ANIMATIONSTESTER.png"));
-			Animationstester.setIcon(new ImageIcon(img));
+			URL bildURL = getClass().getResource(Main.ICON_PATH + "ANIMATIONTESTER.png");
+			Image img = ImageIO.read(bildURL); 
+			this.Animationstester.setIcon(new ImageIcon(img));
 		  } catch (IOException ex) {
 			  System.out.println("Img error");
 		  }
 		this.Animationstester.addActionListener(this);
 		this.mainMenu.add(Animationstester);
 		
+		this.RunAndDodge = new JButton();
+		this.RunAndDodge.setBounds(this.getPosforButton(3), this.getPosforButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
+		try {
+			URL bildURL = getClass().getResource(Main.ICON_PATH + "RUNANDDODGE.png");
+			Image img = ImageIO.read(bildURL); 
+			this.RunAndDodge.setIcon(new ImageIcon(img));
+		  } catch (IOException ex) {
+			  System.out.println("Img error");
+		  }
+		this.RunAndDodge.addActionListener(this);
+		this.mainMenu.add(RunAndDodge);
 	}
 	
 	/* gibt die x bzw y bos des Buttons an relativ zu seiner
@@ -111,6 +127,11 @@ public class Main implements  ActionListener
 		else if(ae.getSource().equals(this.Animationstester)) {
 			Animationtester a = new Animationtester();
 			Thread t = new Thread(a);
+			t.start();
+		}
+		else if(ae.getSource().equals(this.RunAndDodge)) {
+			RunAndDodge r = new RunAndDodge();
+			Thread t = new Thread(r);
 			t.start();
 		}
 	}
