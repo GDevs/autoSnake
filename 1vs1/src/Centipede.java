@@ -3,6 +3,9 @@ import java.awt.event.KeyListener;
 
 
 public class Centipede implements Game, KeyListener, Runnable{
+	private class Obstracle{
+		
+	}
 	
 	
 	@Override
