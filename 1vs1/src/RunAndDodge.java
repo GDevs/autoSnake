@@ -43,6 +43,7 @@ public class RunAndDodge implements Runnable{
 		 */
 		public void updatePos() {
 			this.setLocation((int)Math.round(this.xPos), (int)Math.round(this.yPos));
+			System.out.println(this.xPos + "updatePos " + (int)Math.round(this.xPos));
 		}
 		
 		public void setImage(Image img) {
@@ -109,7 +110,6 @@ public class RunAndDodge implements Runnable{
 	@SuppressWarnings("serial")
 	private class Player extends Entity implements KeyListener{
 		
-		public double xPos = 250,yPos = 250;
 		public boolean isWpressed = false;
 		public boolean isApressed = false;
 		public boolean isSpressed = false;
@@ -136,16 +136,16 @@ public class RunAndDodge implements Runnable{
 		public void move() {
 			double currentTime = System.currentTimeMillis();
 			
-			System.out.println("playerentered MOVE" + this.xPos + "   " + this.yPos);
+			System.out.println("playerentered MOVE " + this.xPos + "   " + this.yPos);
 			
 			if(this.isWpressed) {
 				if(this.isSpressed) {
 					// Do nothing
 				} else {
-					this.yPos = this.yPos + this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
+					this.yPos = this.yPos - this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 				}
 			} else if(this.isSpressed){
-				this.yPos = this.yPos - this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
+				this.yPos = this.yPos + this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 			}
 			
 			
@@ -154,10 +154,10 @@ public class RunAndDodge implements Runnable{
 				if(this.isDpressed) {
 					// Do nothing
 				} else {
-					this.xPos = this.xPos + this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
+					this.xPos = this.xPos - this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 				}
 			} else if(this.isDpressed){
-				this.xPos = this.xPos - this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
+				this.xPos = this.xPos + this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 			}
 			
 			this.lastTime = currentTime;
