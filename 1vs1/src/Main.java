@@ -66,7 +66,7 @@ public class Main implements  ActionListener
 		//222222222222222222222222222222222222222222222222222222222222222222222222222
 		
 		this.WASDmini = new JButton();
-		this.WASDmini.setBounds(this.getPosOfButton(1), this.getPosOfButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
+		this.WASDmini.setBounds(this.getPosforButton(1), this.getPosforButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
 		try {
 			Image img = ImageIO.read(new File(Main.ICON_PATH + "WASDMINI.png"));
 		    WASDmini.setIcon(new ImageIcon(img));
@@ -79,7 +79,7 @@ public class Main implements  ActionListener
 		
 		
 		this.Animationstester = new JButton();
-		this.Animationstester.setBounds(this.getPosOfButton(2), this.getPosOfButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
+		this.Animationstester.setBounds(this.getPosforButton(2), this.getPosforButton(1), Main.BUTTON_BOUNDS, Main.BUTTON_BOUNDS);
 		try {
 			Image img = ImageIO.read(new File(Main.ICON_PATH + "ANIMATIONSTESTER.png"));
 			Animationstester.setIcon(new ImageIcon(img));
@@ -96,7 +96,7 @@ public class Main implements  ActionListener
 	 * 
 	 * 
 	 */
-	public int getPosOfButton(int buttonNr) {
+	public int getPosforButton(int buttonNr) {
 		return (buttonNr-1) * Main.BUTTON_BOUNDS + Main.INTERSPACE_SIZE * buttonNr;
 	}
 	

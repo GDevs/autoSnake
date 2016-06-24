@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class Animationtester implements Runnable{
+	public static String ANIMATION_STORAGE_PATH = "rec/Animationtester/";
 	private JFrame mainFrame;
 	private JButton a;
 	
@@ -27,7 +28,7 @@ public class Animationtester implements Runnable{
 		while(true){
 			for(int i = -10; i < 11; i++){
 				try {
-					Image img = ImageIO.read(new File("rec/"+Math.abs(i)+".png"));
+					Image img = ImageIO.read(new File(Animationtester.ANIMATION_STORAGE_PATH+Math.abs(i)+".png"));
 					a.setIcon(new ImageIcon(img));
 				} catch (IOException ex) {
 				  System.out.println("Img error");
