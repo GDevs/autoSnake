@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -7,12 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class RunAndDodge implements Runnable{
 	
@@ -160,6 +161,11 @@ public class RunAndDodge implements Runnable{
 				this.xPos = this.xPos + this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 			}
 			
+			if (this.xPos < 0) { this.xPos = 0;}
+			else if(this.xPos > RunAndDodge.MAP_SIZE) { this.xPos = RunAndDodge.MAP_SIZE;}
+			if (this.yPos < 0) { this.yPos = 0;}
+			else if(this.yPos > RunAndDodge.MAP_SIZE - RunAndDodge.STANDART_PLAYER_SIZE) { this.yPos = RunAndDodge.MAP_SIZE - RunAndDodge.STANDART_PLAYER_SIZE;}
+			
 			this.lastTime = currentTime;
 		}
 		
@@ -207,6 +213,7 @@ public class RunAndDodge implements Runnable{
 	
 	
 	private JFrame mainFrame;
+	private JPanel board;
 	
 	private Player player;
 	private ArrayList<Image> playerImages;
@@ -227,6 +234,9 @@ public class RunAndDodge implements Runnable{
 		}
 	
 	private void createFrame() {
+		this.board = new JPanel();
+		this.board.setPreferredSize(new Dimension(RunAndDodge.MAP_SIZE,RunAndDodge.MAP_SIZE));
+		
 		this.mainFrame = new JFrame("Run And Dodge");
 		this.mainFrame.setBounds(0, 0, RunAndDodge.MAP_SIZE, RunAndDodge.MAP_SIZE );
 		this.mainFrame.setLocationRelativeTo(null);
@@ -275,11 +285,7 @@ public class RunAndDodge implements Runnable{
 			this.player.repaint();
 			this.mainFrame.revalidate();
 			this.mainFrame.repaint();
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			
 		}
 		
 	}
