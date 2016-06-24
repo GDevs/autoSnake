@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,7 @@ import javax.swing.JLabel;
 
 public class RunAndDodge implements Runnable{
 	
-	public static int TICK_TIME_MIL = 50;
+	public static int TICK_TIME_MIL = 100;
 	
 	public static int STANDART_BULLET_SIZE = 50;
 	public static int STANDART_PLAYER_SIZE = 50;
@@ -135,6 +136,8 @@ public class RunAndDodge implements Runnable{
 		public void move() {
 			double currentTime = System.currentTimeMillis();
 			
+			System.out.println("playerentered MOVE" + this.xPos + "   " + this.yPos);
+			
 			if(this.isWpressed) {
 				if(this.isSpressed) {
 					// Do nothing
@@ -156,6 +159,8 @@ public class RunAndDodge implements Runnable{
 			} else if(this.isDpressed){
 				this.xPos = this.xPos - this.movementspeed * ((currentTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
 			}
+			
+			this.lastTime = currentTime;
 		}
 		
 		@Override
@@ -172,7 +177,7 @@ public class RunAndDodge implements Runnable{
 			else if(ke.getKeyChar() == 'd' ) {
 				isDpressed = true;
 			} 
-			
+			System.out.println("Key :"+ke.getKeyChar());
 		}
 
 		@Override
@@ -204,7 +209,7 @@ public class RunAndDodge implements Runnable{
 	private JFrame mainFrame;
 	
 	private Player player;
-	private List<Image> playerImages;
+	private ArrayList<Image> playerImages;
 	private boolean gotHit = false;
 	private Bullet[] bullets;
 	private int bulletTimer = 1000;
@@ -212,6 +217,8 @@ public class RunAndDodge implements Runnable{
 	
 	
 	public RunAndDodge() {
+		this.playerImages = new ArrayList<Image>();
+		
 		this.createFrame();
 		this.loadGraphics();
 		this.fillFrame();
@@ -224,6 +231,7 @@ public class RunAndDodge implements Runnable{
 		this.mainFrame.setBounds(0, 0, RunAndDodge.MAP_SIZE, RunAndDodge.MAP_SIZE );
 		this.mainFrame.setLocationRelativeTo(null);
 		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainFrame.setLayout(null);
 		this.mainFrame.setVisible(true);
 	}
 	
@@ -262,9 +270,13 @@ public class RunAndDodge implements Runnable{
 	@Override
 	public void run() {
 		while(!gotHit) {
-			System.out.println("loop");
+			this.player.move();
+			this.player.updatePos();
+			this.player.repaint();
+			this.mainFrame.revalidate();
+			this.mainFrame.repaint();
 			try {
-				Thread.sleep(200);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
