@@ -90,7 +90,6 @@ public class RunAndDodge implements Runnable{
 			this.yPos = this.yPos + this.ySpeed * ((systemTime - this.lastTime) /  RunAndDodge.TICK_TIME_MIL);
 			this.lastTime = systemTime;
 			this.updatePos();
-			System.out.println("bulletentered MOVE " + this.xPos + "   " + this.yPos);
 		}
 		
 		
@@ -209,7 +208,7 @@ public class RunAndDodge implements Runnable{
 	private ArrayList<Image> bulletImages;
 	private boolean gotHit = false;
 	private ArrayList<Bullet> bullets;
-	private int bulletTimer = 1000;
+	private int bulletTimer = 500;
 	private int bulletSpeed = 10;
 	private int graphicSpeed = 333;
 	private int playerGraphicCounter = 1;
@@ -296,6 +295,26 @@ public class RunAndDodge implements Runnable{
 		}
 	}
 	
+	
+	
+	
+	private Bullet createNewBullet() {
+		Bullet b = null;
+		int a = (int) (Math.round(Math.random() * 3 ));
+		System.out.println(a);
+		if(a == 0) {
+			b = new Bullet (0, RunAndDodge.MAP_SIZE/2 , Math.random() * 10, Math.random() * 20 -10);
+		} else if ( a == 1) {
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE, 0, Math.random() * 20 -10, Math.random() * -10);
+		} else if(a == 2) {
+			b = new Bullet (RunAndDodge.MAP_SIZE, Math.random() * RunAndDodge.MAP_SIZE, Math.random() * -10, Math.random() * 20 -10);
+		} else if ( a == 3) {
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE, RunAndDodge.MAP_SIZE, Math.random() * 20 -10, Math.random() * -10);
+		} 
+		if (b != null) { return b; }
+		return b = new Bullet(0,0,5,5);
+	}
+	
 	@Override
 	public void run() {
 		while(!gotHit) {
@@ -317,7 +336,7 @@ public class RunAndDodge implements Runnable{
 				
 				this.lastTime = this.lastTime + this.bulletTimer;
 				
-				Bullet b = new Bullet(0,Math.random() * RunAndDodge.MAP_SIZE, this.bulletSpeed, 0);
+				Bullet b = this.createNewBullet();
 				b.setImage(this.bulletImages.get(0));
 				this.mainFrame.add(b);
 				bullets.add(b);
