@@ -2,6 +2,12 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class RunAndDodge implements Runnable{
 	
@@ -104,7 +109,7 @@ public class RunAndDodge implements Runnable{
 		public boolean isApressed = false;
 		public boolean isSpressed = false;
 		public boolean isDpressed = false;
-		public double movementspeed = 50;
+		public double movementspeed = 25;
 		
 		public Player(double pXPos, double pYPos) {
 			super(pXPos,pYPos);
@@ -157,6 +162,13 @@ public class RunAndDodge implements Runnable{
 			this.lastTime = currentTime;
 		}
 		
+		public boolean isKeypressed() {
+			if(this.isApressed || this.isDpressed || this.isSpressed || this.isWpressed) {
+				return true;
+			}
+			else { return false; }
+		}
+		
 		@Override
 		public void keyPressed(KeyEvent ke) {
 			if(ke.getKeyChar() == 'w' ) {
@@ -171,7 +183,6 @@ public class RunAndDodge implements Runnable{
 			else if(ke.getKeyChar() == 'd' ) {
 				isDpressed = true;
 			} 
-			System.out.println("Key :"+ke.getKeyChar());
 		}
 
 		@Override
@@ -201,16 +212,24 @@ public class RunAndDodge implements Runnable{
 	
 	
 	private JFrame mainFrame;
-	private JPanel board;
+	private JLabel board;
 	
 	private Player player;
-	private ArrayList<Image> playerImages;
+	
+	private ArrayList<Image> playerCalmImages;
+	private ArrayList<Image> playerRunLeftImages;
+	private ArrayList<Image> playerRunRigthImages;
+	private ArrayList<Image> playerRunDownImages;
+	private ArrayList<Image> playerRunUpImages;
 	private ArrayList<Image> bulletImages;
+	
 	private boolean gotHit = false;
+	
 	private ArrayList<Bullet> bullets;
-	private int bulletTimer = 500;
+	private int bulletTimer = 350;
 	private int bulletSpeed = 10;
-	private int graphicSpeed = 333;
+	
+	private int graphicSpeed = 250;
 	private int playerGraphicCounter = 1;
 	
 	private double lastTime = System.currentTimeMillis();
@@ -219,7 +238,11 @@ public class RunAndDodge implements Runnable{
 	
 	
 	public RunAndDodge() {
-		this.playerImages = new ArrayList<Image>();
+		this.playerCalmImages = new ArrayList<Image>();
+		this.playerRunLeftImages = new ArrayList<Image>();
+		this.playerRunRigthImages = new ArrayList<Image>();
+		this.playerRunDownImages = new ArrayList<Image>();
+		this.playerRunUpImages = new ArrayList<Image>();
 		this.bulletImages = new ArrayList<Image>();
 		bullets = new ArrayList<Bullet>();
 		
@@ -232,13 +255,22 @@ public class RunAndDodge implements Runnable{
 		}
 	
 	private void createFrame() {
-		this.board = new JPanel();
+		this.board = new JLabel();
+		this.board.setLayout(null);
 		this.board.setPreferredSize(new Dimension(RunAndDodge.MAP_SIZE,RunAndDodge.MAP_SIZE));
+		try {
+			this.board.setIcon(new ImageIcon(ImageIO.read(getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"Background.png"))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.board.setVisible(true);
 		
 		this.mainFrame = new JFrame("Run And Dodge");
+		this.mainFrame.add(this.board);
+		this.mainFrame.pack();
 		this.mainFrame.setBounds(0, 0, RunAndDodge.MAP_SIZE, RunAndDodge.MAP_SIZE );
 		this.mainFrame.setLocationRelativeTo(null);
-		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.mainFrame.setLayout(null);
 		this.mainFrame.setVisible(true);
 		
@@ -246,25 +278,50 @@ public class RunAndDodge implements Runnable{
 	
 	private void fillFrame() {
 		this.player = new Player(RunAndDodge.MAP_SIZE / 2,RunAndDodge.MAP_SIZE / 2);
-		this.player.setImage(this.playerImages.get(0));
+		this.player.setImage(this.playerCalmImages.get(0));
 		this.mainFrame.addKeyListener(this.player);
-		this.mainFrame.add(this.player);
+		this.board.add(this.player);
 	}
 	
 	private void loadGraphics() {
-	   //	FileReader fr;
-		 //try {
-			//fr = new FileReader(RunAndDodge.PLAYER_ICON_PATH + "count.txt");
-			//BufferedReader br = new BufferedReader(fr);
+	   	FileReader fr;
+		 
+		try {
+			URL txtURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH + "count.txt");
+			fr = new FileReader(new File((txtURL.getPath())));
+			BufferedReader br = new BufferedReader(fr);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
 			try {
-				//int count = Integer.parseInt(br.readLine());
+				
 				for(int i = 1; i < 4; i++ ){
 					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"D" + i + ".png");
 					Image img = ImageIO.read(bildURL); 
 					img = ImageIO.read(bildURL);
-					bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"L" + i + ".png");
+					this.playerRunRigthImages.add(img);
+				}
+				for(int i = 1; i < 4; i++ ){
+					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"calm" + i + ".png");
+					Image img = ImageIO.read(bildURL); 
 					img = ImageIO.read(bildURL);
-					this.playerImages.add(img);
+					this.playerCalmImages.add(img);
+				}
+				for(int i = 1; i < 4; i++ ){
+					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"L" + i + ".png");
+					Image img = ImageIO.read(bildURL);
+					this.playerRunLeftImages.add(img);
+				}
+				for(int i = 1; i < 4; i++ ){
+					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"L" + i + ".png");
+					Image img = ImageIO.read(bildURL);
+					this.playerRunUpImages.add(img);
+				}
+				for(int i = 1; i < 4; i++ ){
+					URL bildURL = getClass().getResource(RunAndDodge.PLAYER_ICON_PATH +"L" + i + ".png");
+					Image img = ImageIO.read(bildURL);
+					this.playerRunDownImages.add(img);
 				}
 					
 					
@@ -284,15 +341,37 @@ public class RunAndDodge implements Runnable{
            //   catch (IOException e) {
 		//	e.printStackTrace();
 		//}
-		
 	}
 	
+	
+	
 	private Image calcPlayerImage() {
-		if(this.player.isSpressed) {
-			return this.playerImages.get(this.playerGraphicCounter);
-		} else {
-			return this.playerImages.get(this.playerGraphicCounter +3);
-		}
+		if(this.player.isKeypressed()) {
+			
+			if(this.player.isSpressed) {
+				
+				
+				if (this.player.isWpressed) {
+					return this.playerCalmImages.get(this.playerGraphicCounter);
+				} else { 
+					this.playerRunDownImages.get(this.playerGraphicCounter); 
+				} 
+				
+				
+			} else if (this.player.isWpressed) {
+				return this.playerRunUpImages.get(this.playerGraphicCounter);
+			} else if(this.player.isApressed) {
+				if(this.player.isDpressed) {
+					return this.playerCalmImages.get(this.playerGraphicCounter);
+				}
+				return this.playerRunLeftImages.get(this.playerGraphicCounter);
+			} else if(this.player.isDpressed) {
+				return this.playerRunRigthImages.get(this.playerGraphicCounter);
+			}
+			
+		} 
+			return this.playerCalmImages.get(this.playerGraphicCounter);
+		
 	}
 	
 	
@@ -301,15 +380,17 @@ public class RunAndDodge implements Runnable{
 	private Bullet createNewBullet() {
 		Bullet b = null;
 		int a = (int) (Math.round(Math.random() * 3 ));
-		System.out.println(a);
 		if(a == 0) {
-			b = new Bullet (0, RunAndDodge.MAP_SIZE/2 , Math.random() * 10, Math.random() * 20 -10);
-		} else if ( a == 1) {
-			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE, 0, Math.random() * 20 -10, Math.random() * -10);
-		} else if(a == 2) {
-			b = new Bullet (RunAndDodge.MAP_SIZE, Math.random() * RunAndDodge.MAP_SIZE, Math.random() * -10, Math.random() * 20 -10);
-		} else if ( a == 3) {
-			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE, RunAndDodge.MAP_SIZE, Math.random() * 20 -10, Math.random() * -10);
+			b = new Bullet (									0, RunAndDodge.MAP_SIZE/2              , 	 Math.random() * 10, Math.random() * 20 -10);
+		} 
+		else if ( a == 1) {
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE ,									  0, Math.random() * 20 -10,    Math.random() * +10);
+		} 
+		else if(a == 2) {
+			b = new Bullet (RunAndDodge.MAP_SIZE				 , Math.random() * RunAndDodge.MAP_SIZE, 	Math.random() * -10, Math.random() * 20 -10);
+		} 
+		else if ( a == 3) {
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE , RunAndDodge.MAP_SIZE                , Math.random() * 20 -10,    Math.random() * -10);
 		} 
 		if (b != null) { return b; }
 		return b = new Bullet(0,0,5,5);
@@ -322,7 +403,9 @@ public class RunAndDodge implements Runnable{
 			double currentTime = System.currentTimeMillis();
 			
 			
-			if(this.graphicTime - currentTime > 333) {
+			if(currentTime - this.graphicTime > this.graphicSpeed) {
+				this.graphicTime = this.graphicTime + this.graphicSpeed;
+				
 				this.playerGraphicCounter = ((this.playerGraphicCounter + 1) % 3) ; 
 				Image img = this.calcPlayerImage();
 				this.player.setImage(img);
@@ -338,16 +421,32 @@ public class RunAndDodge implements Runnable{
 				
 				Bullet b = this.createNewBullet();
 				b.setImage(this.bulletImages.get(0));
-				this.mainFrame.add(b);
+				this.board.add(b);
 				bullets.add(b);
 			}
 				
 			for(int i = 0; i < bullets.size(); i++) {
 				bullets.get(i).move();
-				if(bullets.get(i).xPos < 0 || bullets.get(i).xPos > 500 || bullets.get(i).yPos < 0 || bullets.get(i).yPos > 500) {
-					this.mainFrame.remove(bullets.get(i));
+				if(bullets.get(i).xPos < 0 - RunAndDodge.STANDART_BULLET_SIZE || bullets.get(i).xPos > RunAndDodge.MAP_SIZE + RunAndDodge.STANDART_BULLET_SIZE|| bullets.get(i).yPos < 0 - RunAndDodge.STANDART_BULLET_SIZE || bullets.get(i).yPos > RunAndDodge.MAP_SIZE + RunAndDodge.STANDART_BULLET_SIZE) {
+					this.board.remove(bullets.get(i));
 					bullets.remove(i);
 					
+				} else {
+					double bx = bullets.get(i).xPos + RunAndDodge.STANDART_BULLET_SIZE / 2;
+					double by = bullets.get(i).yPos + RunAndDodge.STANDART_BULLET_SIZE / 2;
+					
+					double px = this.player.xPos + RunAndDodge.STANDART_PLAYER_SIZE / 2;
+					double py = this.player.yPos + RunAndDodge.STANDART_PLAYER_SIZE / 2;
+					
+					double xDistance = Math.abs(bx-px);
+					double yDistance = Math.abs(by-py);
+					
+					double trueDistance = Math.sqrt(Math.pow(xDistance, 2) +Math.pow(yDistance, 2));
+					
+					if(trueDistance < RunAndDodge.STANDART_PLAYER_SIZE/2 + RunAndDodge.STANDART_BULLET_SIZE/2) {
+						this.gotHit = true;
+						this.mainFrame.dispatchEvent(new WindowEvent(this.mainFrame, WindowEvent.WINDOW_CLOSING));
+					}
 				}
 					
 			}
