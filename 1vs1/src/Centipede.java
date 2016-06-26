@@ -3,7 +3,18 @@ import java.awt.event.KeyListener;
 
 
 public class Centipede implements Game, KeyListener, Runnable{
-	private class Obstracle{
+	
+	
+	private class Obstracle extends Entity{
+
+		public Obstracle(double pXPos, double pYPos) {
+			super(pXPos, pYPos);
+		}
+
+		@Override
+		public void move() {
+			
+		}
 		
 	}
 	

@@ -16,7 +16,7 @@ public interface Game {
 
 	@SuppressWarnings("serial")
 	abstract public class Entity extends JLabel {
-		public double xPos,yPos;
+		public double xPos,yPos,width,height;
 		public double lastTime = System.currentTimeMillis();
 		
 		public Entity(double pXPos, double pYPos) {
@@ -34,7 +34,8 @@ public interface Game {
 		
 		public void setImage(Image img) {
 			this.setIcon(new ImageIcon(img));
-		
+			width=img.getWidth(null);
+			height=img.getWidth(null);
 		}
 		
 		abstract public void move(); 
