@@ -16,6 +16,7 @@ public class WASD_Mini implements KeyListener{
 	
 	private int hitstreak = 0,hit = 0,miss = 0;
 	
+	private int lastButton = -1;
 	
 	private char currendButton = 'w';
 
@@ -110,7 +111,11 @@ private void resetButtons()
 
 private  void newTarget()
 {
-	int temp = (int) Math.round(Math.random() * 3 );
+	int temp;
+	do{
+	temp = (int) Math.round(Math.random() * 3 );
+	} while(temp == this.lastButton);
+	this.lastButton = temp;
 	if(temp == 0)
 	{
 		this.aButton.setBackground(Color.GREEN);

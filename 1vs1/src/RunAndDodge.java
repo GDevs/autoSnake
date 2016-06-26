@@ -21,13 +21,15 @@ public class RunAndDodge implements Runnable{
 	
 	public static int TICK_TIME_MIL = 100;
 	
-	public static int STANDART_BULLET_SIZE = 50;
+	public static int STANDART_BULLET_SIZE = 30;
 	public static int STANDART_PLAYER_SIZE = 50;
+	
+	public static double STANDART_BULLET_SPEED = 1;
 	
 	public static String BULLET_ICON_PATH = "/rec/RunAndDodge/Bullet/";
 	public static String PLAYER_ICON_PATH = "/rec/RunAndDodge/Player/";
 	
-	public static int MAP_SIZE = 500;
+	public static int MAP_SIZE = 1000;
 	
 	
 	@SuppressWarnings("serial")
@@ -65,7 +67,7 @@ public class RunAndDodge implements Runnable{
 	
 	@SuppressWarnings("serial")
 	private class Bullet extends Entity{
-		public double xSpeed,ySpeed;
+		public double xSpeed,ySpeed , speedMovement = 1;
 		
 		
 		public Bullet(double pXPos, double pYPos,double pXSpeed,double pYSpeed) {
@@ -91,8 +93,8 @@ public class RunAndDodge implements Runnable{
 		
 		public void move() {
 			double systemTime = System.currentTimeMillis();
-			this.xPos = this.xPos + this.xSpeed * ((systemTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL);
-			this.yPos = this.yPos + this.ySpeed * ((systemTime - this.lastTime) /  RunAndDodge.TICK_TIME_MIL);
+			this.xPos = this.xPos + this.xSpeed * ((systemTime - this.lastTime) / RunAndDodge.TICK_TIME_MIL) * this.speedMovement;
+			this.yPos = this.yPos + this.ySpeed * ((systemTime - this.lastTime) /  RunAndDodge.TICK_TIME_MIL) * this.speedMovement;
 			this.lastTime = systemTime;
 			this.updatePos();
 		}
@@ -109,7 +111,7 @@ public class RunAndDodge implements Runnable{
 		public boolean isApressed = false;
 		public boolean isSpressed = false;
 		public boolean isDpressed = false;
-		public double movementspeed = 25;
+		public double movementspeed = 30;
 		
 		public Player(double pXPos, double pYPos) {
 			super(pXPos,pYPos);
@@ -226,8 +228,8 @@ public class RunAndDodge implements Runnable{
 	private boolean gotHit = false;
 	
 	private ArrayList<Bullet> bullets;
-	private int bulletTimer = 350;
-	private int bulletSpeed = 10;
+	private int bulletTimer = 50;
+	private int bulletSpeed = 50;
 	
 	private int graphicSpeed = 250;
 	private int playerGraphicCounter = 1;
@@ -381,16 +383,16 @@ public class RunAndDodge implements Runnable{
 		Bullet b = null;
 		int a = (int) (Math.round(Math.random() * 3 ));
 		if(a == 0) {
-			b = new Bullet (									0, RunAndDodge.MAP_SIZE/2              , 	 Math.random() * 10, Math.random() * 20 -10);
+			b = new Bullet (									0, RunAndDodge.MAP_SIZE/2              , 	 Math.random() * this.bulletSpeed, Math.random() * this.bulletSpeed * 2 - this.bulletSpeed);
 		} 
 		else if ( a == 1) {
-			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE ,									  0, Math.random() * 20 -10,    Math.random() * +10);
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE ,									  0, Math.random() * this.bulletSpeed*2 - this.bulletSpeed,    Math.random() * + this.bulletSpeed);
 		} 
 		else if(a == 2) {
-			b = new Bullet (RunAndDodge.MAP_SIZE				 , Math.random() * RunAndDodge.MAP_SIZE, 	Math.random() * -10, Math.random() * 20 -10);
+			b = new Bullet (RunAndDodge.MAP_SIZE				 , Math.random() * RunAndDodge.MAP_SIZE, 	Math.random() * - this.bulletSpeed, Math.random() * this.bulletSpeed * 2 -this.bulletSpeed);
 		} 
 		else if ( a == 3) {
-			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE , RunAndDodge.MAP_SIZE                , Math.random() * 20 -10,    Math.random() * -10);
+			b = new Bullet (Math.random() * RunAndDodge.MAP_SIZE , RunAndDodge.MAP_SIZE                , Math.random()  * this.bulletSpeed * 2 - this.bulletSpeed,    Math.random() * -this.bulletSpeed);
 		} 
 		if (b != null) { return b; }
 		return b = new Bullet(0,0,5,5);
@@ -421,6 +423,7 @@ public class RunAndDodge implements Runnable{
 				
 				Bullet b = this.createNewBullet();
 				b.setImage(this.bulletImages.get(0));
+				b.speedMovement = RunAndDodge.STANDART_BULLET_SPEED;
 				this.board.add(b);
 				bullets.add(b);
 			}
